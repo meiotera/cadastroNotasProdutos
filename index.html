@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Produtos e Notas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Cadastro de Produtos por Notas</h1>
+
+  <form id="formProduto">
+    <label for="codigo">Código do Produto:</label>
+    <input type="text" id="codigo" required>
+
+    <label for="notas">Notas (separadas por vírgula):</label>
+    <input type="text" id="notas" required>
+
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <button id="limparDados" class="limpar-btn">🗑️ Limpar Tudo</button>
+
+  <div id="notasProdutos">
+    <h2>🔍 Notas e Produtos Relacionados</h2>
+  </div>
+  <div id="resultado">
+    <h2>📦 Produtos e suas Notas</h2>
+    <div id="listaProdutos"></div>
+  </div>
+
+
+  <script src="script.js"></script>
+</body>
+
+</html>
