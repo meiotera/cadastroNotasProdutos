@@ -1,149 +1,212 @@
-let produtos = {};
-let mapaNotasCores = {};
-let corIndex = 0;
-
-const coresDisponiveis = [
-  '#ffadad',
-  '#ffd6a5',
-  '#fdffb6',
-  '#caffbf',
-  '#9bf6ff',
-  '#a0c4ff',
-  '#bdb2ff',
-  '#ffc6ff',
-  '#fffffc',
-  '#d0f4de',
-  '#fef9c7',
-  '#fcd5ce',
-];
-
 const form = document.getElementById('formProduto');
 const listaProdutos = document.getElementById('listaProdutos');
 const notasProdutos = document.getElementById('notasProdutos');
+const notasEmitidasDiv = document.getElementById('notasEmitidas');
+const btnRestaurarBackup = document.getElementById('restaurarBackup');
+const btnLimpar = document.getElementById('limparDados');
+
+let produtosNotas = JSON.parse(localStorage.getItem('produtosNotas')) || [];
+let produtosNotasBackup =
+  JSON.parse(localStorage.getItem('produtosNotasBackup')) || [];
+let notasEmitidas = JSON.parse(localStorage.getItem('notasEmitidas')) || [];
+
+function salvarDados() {
+  localStorage.setItem('produtosNotas', JSON.stringify(produtosNotas));
+  localStorage.setItem(
+    'produtosNotasBackup',
+    JSON.stringify(produtosNotasBackup),
+  );
+  localStorage.setItem('notasEmitidas', JSON.stringify(notasEmitidas));
+}
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  adicionarProduto();
-});
-
-document.getElementById('limparDados').addEventListener('click', () => {
-  if (confirm('Tem certeza que deseja apagar todos os dados?')) {
-    localStorage.removeItem('produtosNotas');
-    localStorage.removeItem('coresNotas');
-    produtos = {};
-    mapaNotasCores = {};
-    corIndex = 0;
-    atualizarInterface();
-  }
-});
-
-function adicionarProduto() {
   const codigo = document.getElementById('codigo').value.trim();
-  const notasInput = document.getElementById('notas').value.trim();
-
-  if (!codigo || !notasInput) return;
-
-  const notas = notasInput
-    .split(',')
+  const notas = document
+    .getElementById('notas')
+    .value.split(' ')
     .map((n) => n.trim())
-    .filter((n) => n !== '');
+    .filter(Boolean);
 
-  if (!produtos[codigo]) {
-    produtos[codigo] = [];
-  }
+  if (!codigo || notas.length === 0) return;
 
-  notas.forEach((nota) => {
-    if (!produtos[codigo].includes(nota)) {
-      produtos[codigo].push(nota);
+  const novoProduto = { codigo, notas };
 
-      if (!mapaNotasCores[nota]) {
-        mapaNotasCores[nota] =
-          coresDisponiveis[corIndex % coresDisponiveis.length];
-        corIndex++;
-      }
-    }
+  produtosNotas.push(novoProduto);
+  produtosNotasBackup.push(novoProduto);
+  salvarDados();
+
+  form.reset();
+  renderizarTudo();
+});
+
+// 📤 Emitir nota
+function emitirNota(notaSelecionada) {
+  const produtosComNota = produtosNotas.filter((p) =>
+    p.notas.includes(notaSelecionada),
+  );
+
+  if (produtosComNota.length === 0) return;
+
+  const codigosAlvo = [...new Set(produtosComNota.map((p) => p.codigo))];
+
+  const numeroNota = prompt(
+    `Informe o número da Nota Fiscal para os códigos: ${codigosAlvo.join(
+      ', ',
+    )}:`,
+  );
+  if (!numeroNota) return;
+
+  const todasNotasRelacionadas = [
+    ...new Set(
+      produtosNotas
+        .filter((p) => codigosAlvo.includes(p.codigo))
+        .flatMap((p) => p.notas),
+    ),
+  ];
+
+  notasEmitidas.push({
+    numeroNota,
+    produtos: codigosAlvo,
+    notas: todasNotasRelacionadas,
   });
 
-  atualizarInterface();
+  produtosNotas = produtosNotas
+    .map((p) =>
+      codigosAlvo.includes(p.codigo)
+        ? {
+            ...p,
+            notas: p.notas.filter((n) => !todasNotasRelacionadas.includes(n)),
+          }
+        : p,
+    )
+    .filter((p) => p.notas.length > 0);
+
   salvarDados();
-  form.reset();
+  renderizarTudo();
 }
 
-function atualizarInterface() {
+// 🗑️ Limpar tudo
+btnLimpar.addEventListener('click', () => {
+  if (confirm('Tem certeza que deseja apagar todos os dados?')) {
+    produtosNotas = [];
+    produtosNotasBackup = [];
+    notasEmitidas = [];
+    salvarDados();
+    renderizarTudo();
+  }
+});
+
+// 🔄 Renderizar tudo
+function renderizarTudo() {
+  renderizarProdutos();
+  renderizarNotas();
+  renderizarNotasEmitidas();
+}
+
+function copiarTexto(texto) {
+  navigator.clipboard
+    .writeText(texto)
+    .then(() => {
+      alert(`Copiado para a área de transferência: ${texto}`);
+    })
+    .catch(() => {
+      alert('Falha ao copiar o texto.');
+    });
+}
+
+function renderizarProdutos() {
   listaProdutos.innerHTML = '';
-  for (const codigo in produtos) {
+  produtosNotas.forEach((p, index) => {
     const div = document.createElement('div');
-    div.innerHTML = `<strong>${codigo}</strong> `;
-    produtos[codigo].forEach((nota) => {
-      const span = document.createElement('span');
-      span.className = 'tag';
-      span.textContent = nota;
-      span.style.backgroundColor = mapaNotasCores[nota] || '#ccc';
-      div.appendChild(span);
+    div.classList.add('card-nota'); // Adiciona classe para consistência visual
+    div.innerHTML = `
+      <strong class="codigo-clicavel">${p.codigo}</strong>
+      ${p.notas
+        .map((n) => `<span class="tag codigo-clicavel">${n}</span>`)
+        .join('')}
+      <button class="botao-remover" title="Remover este item">❌</button>
+    `;
+
+    // Copiar o código ao clicar
+    div
+      .querySelector('strong.codigo-clicavel')
+      .addEventListener('click', () => copiarTexto(p.codigo));
+
+    // Copiar as notas ao clicar
+    div.querySelectorAll('span.codigo-clicavel').forEach((span) => {
+      span.addEventListener('click', () => copiarTexto(span.textContent));
     });
+
+    // Botão de remover item
+    div.querySelector('.botao-remover').addEventListener('click', () => {
+      if (confirm(`Deseja remover o produto ${p.codigo}?`)) {
+        produtosNotas.splice(index, 1);
+        salvarDados();
+        renderizarTudo();
+      }
+    });
+
     listaProdutos.appendChild(div);
-  }
+  });
+}
 
-  // Visão por nota (reverso)
+function renderizarNotas() {
   notasProdutos.innerHTML = '<h2>🔍 Notas e Produtos Relacionados</h2>';
-  const notasMapeadas = {};
+  const notasUnicas = [...new Set(produtosNotas.flatMap((p) => p.notas))];
 
-  for (const codigo in produtos) {
-    produtos[codigo].forEach((nota) => {
-      if (!notasMapeadas[nota]) {
-        notasMapeadas[nota] = [];
-      }
-      if (!notasMapeadas[nota].includes(codigo)) {
-        notasMapeadas[nota].push(codigo);
-      }
-    });
-  }
+  notasUnicas.forEach((nota) => {
+    const produtosRelacionados = produtosNotas
+      .filter((p) => p.notas.includes(nota))
+      .map((p) => p.codigo);
 
-  for (const nota in notasMapeadas) {
     const div = document.createElement('div');
-    div.className = 'card-nota';
+    div.classList.add('card-nota');
+    div.innerHTML = `
+      <strong>Nota: <span class="codigo-clicavel">${nota}</span></strong>
+      ${produtosRelacionados
+        .map((p) => `<span class="produto-tag codigo-clicavel">${p}</span>`)
+        .join('')}
+      <button class="botao-emitir">Separa por Item</button>
+    `;
 
-    const cor = mapaNotasCores[nota] || '#ddd';
+    // Copiar a nota ao clicar
+    div
+      .querySelector('span.codigo-clicavel')
+      .addEventListener('click', () => copiarTexto(nota));
 
-    const titulo = document.createElement('strong');
-    titulo.textContent = `Nota: ${nota}`;
-    titulo.style.backgroundColor = cor;
-
-    div.appendChild(titulo);
-
-    const produtosDiv = document.createElement('div');
-    produtosDiv.className = 'produtos-lista';
-
-    notasMapeadas[nota].forEach((codigo) => {
-      const tag = document.createElement('span');
-      tag.className = 'produto-tag';
-      tag.textContent = codigo;
-      produtosDiv.appendChild(tag);
+    // Copiar códigos dos produtos relacionados ao clicar
+    div.querySelectorAll('span.produto-tag.codigo-clicavel').forEach((span) => {
+      span.addEventListener('click', () => copiarTexto(span.textContent));
     });
 
-    div.appendChild(produtosDiv);
+    div
+      .querySelector('.botao-emitir')
+      .addEventListener('click', () => emitirNota(nota));
     notasProdutos.appendChild(div);
-  }
+  });
 }
 
-function salvarDados() {
-  localStorage.setItem('produtosNotas', JSON.stringify(produtos));
-  localStorage.setItem('coresNotas', JSON.stringify(mapaNotasCores));
+function renderizarNotasEmitidas() {
+  notasEmitidasDiv.innerHTML = '<h2>📤 Notas Emitidas</h2>';
+  notasEmitidas.forEach((item) => {
+    const div = document.createElement('div');
+    div.classList.add('card-nota');
+    div.innerHTML = `
+      <strong>Nota Fiscal Nº ${item.numeroNota}</strong>    
+      <div><strong>Produtos:</strong> ${item.produtos
+        .map((p) => `<span class="produto-tag">${p}</span>`)
+        .join('')}</div>
+    `;
+    notasEmitidasDiv.appendChild(div);
+  });
 }
 
-function carregarDados() {
-  const dadosProdutos = localStorage.getItem('produtosNotas');
-  const dadosCores = localStorage.getItem('coresNotas');
+btnRestaurarBackup.addEventListener('click', () => {
+  produtosNotas = JSON.parse(JSON.stringify(produtosNotasBackup));
+  salvarDados();
+  renderizarTudo();
+  alert('Backup restaurado com sucesso!');
+});
 
-  if (dadosProdutos) {
-    produtos = JSON.parse(dadosProdutos);
-  }
-
-  if (dadosCores) {
-    mapaNotasCores = JSON.parse(dadosCores);
-    corIndex = Object.keys(mapaNotasCores).length;
-  }
-}
-
-carregarDados();
-atualizarInterface();
+renderizarTudo();
