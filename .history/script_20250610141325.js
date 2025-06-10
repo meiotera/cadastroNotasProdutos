@@ -111,7 +111,10 @@ function copiarTexto(texto, elementoClicado) {
       // Adicionar classe 'copiado' ao elemento clicado
       if (elementoClicado) {
         elementoClicado.classList.add('copiado');
+        // Remover a classe após um tempo para feedback visual temporário
       }
+      // Opcional: Mostrar uma notificação mais discreta em vez de alert
+      // console.log('Texto copiado:', texto);
     })
     .catch((err) => {
       console.error('Falha ao copiar o texto:', err);

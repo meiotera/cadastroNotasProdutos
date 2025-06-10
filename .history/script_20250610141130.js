@@ -104,17 +104,17 @@ function renderizarTudo() {
   renderizarNotasEmitidas();
 }
 
-function copiarTexto(texto, elementoClicado) {
+function copiarTexto(texto) {
   navigator.clipboard
     .writeText(texto)
     .then(() => {
-      // Adicionar classe 'copiado' ao elemento clicado
-      if (elementoClicado) {
-        elementoClicado.classList.add('copiado');
-      }
+      // adicionar classe copiado
+      //texto.classList.add('copiado');
+      texto.classList.add('copiado');
+
+      console.log('Texto copiado para a área de transferência. ', texto);
     })
-    .catch((err) => {
-      console.error('Falha ao copiar o texto:', err);
+    .catch(() => {
       alert('Falha ao copiar o texto.');
     });
 }
@@ -134,14 +134,12 @@ function renderizarProdutos() {
 
     // Copiar o código ao clicar
     div
-      .querySelector('strong.codigo-clicavel') // Este é o elemento clicado
-      .addEventListener('click', (e) => copiarTexto(p.codigo, e.target));
+      .querySelector('strong.codigo-clicavel')
+      .addEventListener('click', () => copiarTexto(p.codigo));
 
     // Copiar as notas ao clicar
     div.querySelectorAll('span.codigo-clicavel').forEach((span) => {
-      span.addEventListener('click', (e) =>
-        copiarTexto(span.textContent, e.target),
-      );
+      span.addEventListener('click', () => copiarTexto(span.textContent));
     });
 
     // Botão de remover item
@@ -188,14 +186,12 @@ function renderizarNotas() {
 
     // Copiar a nota ao clicar
     div
-      .querySelector('strong > span.codigo-clicavel') // Elemento clicado é o span dentro do strong
-      .addEventListener('click', (e) => copiarTexto(nota, e.target));
+      .querySelector('span.codigo-clicavel')
+      .addEventListener('click', () => copiarTexto(nota));
 
     // Copiar códigos dos produtos relacionados ao clicar
     div.querySelectorAll('span.produto-tag.codigo-clicavel').forEach((span) => {
-      span.addEventListener('click', (e) =>
-        copiarTexto(span.textContent, e.target),
-      );
+      span.addEventListener('click', () => copiarTexto(span.textContent));
     });
 
     div
