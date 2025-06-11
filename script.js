@@ -1,5 +1,7 @@
 const form = document.getElementById('formProduto');
+const codigoInput = document.getElementById('codigo');
 const listaProdutos = document.getElementById('listaProdutos');
+const notasInput = document.getElementById('notas');
 const notasProdutos = document.getElementById('notasProdutos');
 const notasEmitidasDiv = document.getElementById('notasEmitidas');
 const btnRestaurarBackup = document.getElementById('restaurarBackup');
@@ -19,21 +21,69 @@ function salvarDados() {
   localStorage.setItem('notasEmitidas', JSON.stringify(notasEmitidas));
 }
 
+codigoInput.addEventListener('blur', () => {
+  const codigoValor = codigoInput.value.trim();
+  if (!codigoValor) {
+    return;
+  }
+
+  const produtoExistente = produtosNotas.find((p) => p.codigo === codigoValor);
+
+  if (produtoExistente && produtoExistente.notas.length > 0) {
+    notasInput.value = produtoExistente.notas.join(' ');
+  }
+});
+
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  const codigo = document.getElementById('codigo').value.trim();
-  const notas = document
-    .getElementById('notas')
-    .value.split(' ')
+  const codigo = codigoInput.value.trim();
+  const notas = notasInput.value
+    .split(' ')
     .map((n) => n.trim())
     .filter(Boolean);
 
   if (!codigo || notas.length === 0) return;
 
-  const novoProduto = { codigo, notas };
+  const indiceProdutoExistente = produtosNotas.findIndex(
+    (p) => p.codigo === codigo,
+  );
 
-  produtosNotas.push(novoProduto);
-  produtosNotasBackup.push(novoProduto);
+  if (indiceProdutoExistente > -1) {
+    // Produto existe, adiciona apenas as novas notas que não estão lá
+    const notasAtuais = produtosNotas[indiceProdutoExistente].notas;
+    const novasNotasParaAdicionar = notas.filter(
+      (n) => !notasAtuais.includes(n),
+    );
+    produtosNotas[indiceProdutoExistente].notas.push(
+      ...novasNotasParaAdicionar,
+    );
+
+    // Atualiza o backup também
+    const indiceBackup = produtosNotasBackup.findIndex(
+      (p) => p.codigo === codigo,
+    );
+    if (indiceBackup > -1) {
+      const notasAtuaisBackup = produtosNotasBackup[indiceBackup].notas;
+      const novasNotasParaAdicionarBackup = notas.filter(
+        (n) => !notasAtuaisBackup.includes(n),
+      );
+      produtosNotasBackup[indiceBackup].notas.push(
+        ...novasNotasParaAdicionarBackup,
+      );
+    } else {
+      // Se por algum motivo não estiver no backup, adiciona com as notas combinadas
+      produtosNotasBackup.push({
+        codigo,
+        notas: [...notasAtuais, ...novasNotasParaAdicionar],
+      });
+    }
+  } else {
+    // Produto novo
+    const novoProduto = { codigo, notas };
+    produtosNotas.push(novoProduto);
+    produtosNotasBackup.push({ ...novoProduto }); // Cria uma cópia para o backup
+  }
+
   salvarDados();
 
   form.reset();
