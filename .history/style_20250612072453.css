@@ -1,0 +1,342 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f9fafb;
+  color: #1f2937;
+  padding: 20px 15px; /* Reduzido padding do body */
+  line-height: 1.6;
+}
+
+/* Títulos */
+h1,
+h2 {
+  text-align: center;
+  margin-bottom: 18px; /* Reduzido margin-bottom */
+  font-size: 1.5rem; /* Reduzido font-size */
+  color: #1e40af;
+  font-weight: 600;
+}
+
+/* Formulário */
+form {
+  background: #ffffff;
+  padding: 20px 24px; /* Reduzido padding */
+  border-radius: 10px;
+  max-width: 620px;
+  margin: 0 auto 30px auto; /* Reduzido margin-bottom */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+label {
+  display: block;
+  margin: 14px 0 6px; /* Reduzido margin */
+  font-weight: 500;
+  color: #374151;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px; /* Reduzido padding */
+  border-radius: 8px;
+  border: 1.5px solid #d1d5db;
+  background-color: #f9fafb;
+  font-size: 1rem;
+  color: #1f2937;
+  transition: 0.2s;
+}
+
+input:focus {
+  border-color: #3b82f6;
+  outline: none;
+  background-color: #fff;
+}
+
+/* Botões */
+button {
+  margin-top: 20px; /* Reduzido margin-top */
+  padding: 10px 20px; /* Reduzido padding */
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem; /* Levemente reduzido font-size */
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.botoes-secundarios {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px; /* Reduzido gap */
+}
+
+.botoes-secundarios button {
+  margin: 0;
+}
+
+button:hover {
+  background-color: #2563eb;
+}
+
+.limpar-btn {
+  background-color: #ef4444;
+  margin: 20px auto; /* Reduzido margin */
+  display: block;
+  max-width: 620px;
+}
+
+.limpar-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Containers principais */
+#resultado,
+#notasProdutos,
+#notasEmitidas {
+  max-width: 800px;
+  margin: 0 auto 30px;
+}
+
+/* Aplicar Flexbox aos containers dos cards para layout lado a lado */
+#listaProdutos,
+#notasProdutos,
+#notasEmitidas {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
+  gap: 16px; /* Espaçamento entre os cards */
+}
+
+/* Lista de produtos */
+#listaProdutos > .card-nota {
+  /* Especificidade para os cards dentro de #listaProdutos */
+  /* background: #ffffff; - Removido pois .card-nota já tem */
+  /* padding: 16px 20px; - Removido pois .card-nota já tem */
+  margin-bottom: 0; /* Removido margin-bottom pois o gap do flex container cuidará disso */
+  /* border-radius: 10px; - Removido pois .card-nota já tem */
+  /* box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05); - Removido pois .card-nota já tem */
+  flex: 1 1 300px; /* Permite que o card cresça, não encolha, base de 300px */
+  min-width: 280px; /* Garante uma largura mínima antes de quebrar */
+}
+
+#listaProdutos strong {
+  display: block;
+  margin-bottom: 8px; /* Reduzido margin-bottom */
+  font-size: 0.95rem; /* Levemente reduzido font-size */
+  color: #111827;
+}
+
+/* Tags */
+.tag,
+.produto-tag {
+  display: inline-block;
+  padding: 4px 10px; /* Reduzido padding */
+  margin: 3px 4px 3px 0; /* Reduzido margin */
+  font-size: 0.8rem; /* Reduzido font-size */
+  font-weight: 600;
+  border-radius: 999px;
+  user-select: none;
+}
+
+.tag {
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+
+.produto-tag {
+  background-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.tag:hover,
+.produto-tag:hover {
+  opacity: 0.85;
+}
+
+/* Estilo para o nome do produto dentro da tag de produto em "Notas e Produtos Relacionados" */
+.nome-produto-na-nota {
+  font-size: 0.75rem; /* Um pouco menor que o código */
+  color: #4b5563; /* Cor mais suave */
+}
+
+/* Cartão de nota fiscal */
+.card-nota {
+  background: #ffffff;
+  padding: 20px; /* Padding uniforme para melhor espaçamento interno */
+  margin-bottom: 0; /* Removido pois o gap do flex container cuidará disso */
+  border: 1px solid #e5e7eb; /* Borda sutil e uniforme */
+  border-radius: 12px; /* Bordas mais arredondadas para um look moderno */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07); /* Sombra mais suave e moderna */
+  /* Para layout flex lado a lado */
+  flex: 1 1 300px; /* Permite que o card cresça, não encolha, base de 300px */
+  min-width: 280px; /* Garante uma largura mínima antes de quebrar */
+  display: flex; /* Para alinhar conteúdo interno se necessário */
+  flex-direction: column; /* Para que o conteúdo interno se empilhe verticalmente */
+  min-height: 180px; /* Aumenta a altura mínima para mais respiro */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Efeito suave no hover */
+}
+
+.card-nota:hover {
+  transform: translateY(-4px); /* Leve elevação no hover */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); /* Sombra mais pronunciada no hover */
+}
+
+/* Estilo para o título principal dentro do card */
+.card-nota > strong {
+  display: block;
+  margin-bottom: 12px; /* Mais espaço após o título antes da borda/conteúdo */
+  font-size: 1.1rem; /* Título um pouco maior para destaque */
+  color: #111827;
+  font-weight: 600;
+  padding-bottom: 12px; /* Espaço para a borda inferior */
+  border-bottom: 1px solid #e5e7eb; /* Borda inferior mais clara e consistente */
+  line-height: 1.4; /* Melhor legibilidade para o título */
+}
+
+/* Estilo para o nome do produto exibido no card */
+.produto-nome-display {
+  font-size: 0.9rem;
+  color: #4b5563; /* Cor um pouco mais suave */
+  margin-bottom: 8px; /* Espaço abaixo do nome */
+}
+
+/* Para outros 'strong' dentro de divs no card, como "Produtos:" */
+.card-nota div strong {
+  font-weight: 500; /* Um pouco menos de peso que o título principal */
+  color: #374151; /* Cor um pouco mais suave para texto secundário */
+}
+
+.card-nota > div:not(:first-child) {
+  /* Para espaçar os elementos filhos dentro do card */
+  margin-top: 12px; /* Aumenta o espaço para seções de conteúdo */
+  flex-grow: 1; /* Permite que esta área de conteúdo cresça */
+}
+
+/* Botões de ação */
+.botao-copiar,
+.botao-emitir {
+  margin-left: 8px;
+  padding: 5px 10px; /* Reduzido padding */
+  border-radius: 6px;
+  font-size: 0.8rem; /* Reduzido font-size */
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 16px; /* Espaço consistente acima dos botões */
+  align-self: flex-start; /* Alinha o botão à esquerda do card */
+}
+
+.botao-copiar {
+  background: #10b981;
+  color: white;
+}
+
+.botao-copiar:hover {
+  background: #059669;
+}
+
+.botao-emitir {
+  background: #f59e0b;
+  color: #ffffff; /* Texto branco para melhor contraste com laranja */
+}
+
+.botao-emitir:hover {
+  background: #dd8c00;
+}
+
+.copiado {
+  border: 1px solid #059669;
+  background-color: #25e772;
+}
+
+/* Itens clicáveis */
+.codigo-clicavel,
+.numero-nota-clicavel {
+  cursor: pointer;
+  color: #3b82f6;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.codigo-clicavel:hover,
+.numero-nota-clicavel:hover {
+  color: #1d4ed8;
+}
+
+/* Responsivo */
+@media (max-width: 720px) {
+  form,
+  .limpar-btn,
+  #resultado,
+  #notasProdutos,
+  #notasEmitidas {
+    padding: 20px 15px;
+    margin: 0 auto 30px; /* Mantém centralizado mas ajusta para o gap do flex */
+    max-width: 100%;
+    flex-direction: column; /* Em telas menores, volta para layout de coluna */
+    gap: 12px;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px 0;
+  }
+
+  .botao-copiar,
+  .botao-emitir {
+    width: auto;
+    display: inline-block;
+    margin-top: 8px;
+  }
+}
+
+.botao-remover {
+  background: transparent;
+  /* Estilo de botão mais sutil para remover */
+  background-color: #fee2e2; /* Fundo vermelho claro */
+  color: #ef4444; /* Texto vermelho */
+  border: 1px solid #fecaca; /* Borda vermelha sutil */
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 16px; /* Espaço consistente acima do botão */
+  align-self: flex-start; /* Alinha à esquerda */
+  line-height: 1.2; /* Ajuste para o emoji/texto */
+}
+
+/* Estilos para destacar a seção de Notas Emitidas */
+#notasEmitidas {
+  background-color: #e9f5ff; /* Fundo azul bem claro */
+  padding: 25px; /* Aumenta o padding para mais destaque */
+  border-radius: 12px; /* Bordas arredondadas consistentes com .card-nota */
+  border: 2px dashed #007bff; /* Borda azul tracejada */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra sutil */
+  /* As propriedades flex (display, flex-wrap, gap) são herdadas das regras anteriores,
+     o que é bom. O max-width e margin também são herdados. */
+}
+
+/* Estilos para os cards dentro da seção de Notas Emitidas */
+#notasEmitidas .card-nota {
+  background-color: #ffffff; /* Garante fundo branco para os cards internos */
+  border-left: 6px solid #007bff; /* Borda lateral azul mais espessa */
+  /* Os demais estilos de .card-nota (padding, shadow, etc.) são herdados.
+     A borda lateral pode reduzir um pouco o espaço interno visual,
+     mas o padding de 20px do .card-nota deve ser suficiente. */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); /* Sombra um pouco mais sutil para os cards internos */
+}
+
+/* Estilo para o título (Número da Nota Fiscal) dentro dos cards de Notas Emitidas */
+#notasEmitidas .card-nota > strong {
+  color: #0056b3; /* Cor azul escura para o texto do título da nota fiscal */
+  /* A borda inferior e outros estilos são herdados de .card-nota > strong */
+}

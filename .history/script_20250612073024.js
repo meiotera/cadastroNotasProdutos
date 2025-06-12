@@ -29,6 +29,7 @@ codigoInput.addEventListener('blur', () => {
     return;
   }
 
+  // Modificado para buscar no backup
   const produtoExistente = produtosNotasBackup.find(
     (p) => p.codigo === codigoValor,
   );
@@ -41,6 +42,7 @@ codigoInput.addEventListener('blur', () => {
       nomeProdutoInput.value = ''; // Limpa se não houver nome no backup
     }
   } else {
+    // Se o produto não for encontrado no backup ou não tiver notas, limpa ambos os campos
     notasInput.value = '';
     nomeProdutoInput.value = '';
   }
@@ -49,13 +51,13 @@ codigoInput.addEventListener('blur', () => {
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const codigo = codigoInput.value.trim();
-  const nome = nomeProdutoInput.value.trim();
+  const nome = nomeProdutoInput.value.trim(); // Captura o nome do produto
   const notas = notasInput.value
     .split(' ')
     .map((n) => n.trim())
     .filter(Boolean);
 
-  if (!codigo || !nome || notas.length === 0) return;
+  if (!codigo || !nome || notas.length === 0) return; // Adiciona verificação para o nome
   const indiceProdutoExistenteEmProdutosNotas = produtosNotas.findIndex(
     (p) => p.codigo === codigo,
   );
@@ -65,28 +67,31 @@ form.addEventListener('submit', (e) => {
   );
 
   if (indiceProdutoExistenteEmProdutosNotas > -1) {
+    // Produto existe em produtosNotas (UPDATING)
     produtosNotas[indiceProdutoExistenteEmProdutosNotas].notas = notas;
-    produtosNotas[indiceProdutoExistenteEmProdutosNotas].nome = nome;
+    produtosNotas[indiceProdutoExistenteEmProdutosNotas].nome = nome; // Atualiza o nome
 
     // Atualiza no backup SOMENTE SE JÁ EXISTIR LÁ
     if (indiceProdutoExistenteEmBackup > -1) {
       produtosNotasBackup[indiceProdutoExistenteEmBackup].notas = notas;
-      produtosNotasBackup[indiceProdutoExistenteEmBackup].nome = nome;
+      produtosNotasBackup[indiceProdutoExistenteEmBackup].nome = nome; // Atualiza o nome no backup
     }
+    // Se não existe no backup, não faz nada com o backup durante uma atualização.
   } else {
-    const novoProduto = { codigo, nome, notas };
+    // Produto é NOVO para produtosNotas (ADDING)
+    const novoProduto = { codigo, nome, notas }; // Inclui o nome ao criar novo produto
     produtosNotas.push(novoProduto);
 
     // Adiciona ao backup SOMENTE SE NÃO EXISTIR LÁ AINDA
     if (indiceProdutoExistenteEmBackup === -1) {
-      produtosNotasBackup.push({ ...novoProduto });
+      produtosNotasBackup.push({ ...novoProduto }); // Inclui o nome ao adicionar no backup
     }
   }
 
   salvarDados();
 
   form.reset();
-  renderizarTudo(codigo);
+  renderizarTudo(codigo); // Passa o código do produto submetido para filtrar a exibição
 });
 
 // 📤 Emitir nota
@@ -106,15 +111,18 @@ function emitirNota(notaSelecionada) {
   );
   if (!numeroNota) return;
 
+  // Mapear os códigos alvo para objetos contendo código e nome
   const produtosInfoParaNotaEmitida = codigosAlvo.map((codigo) => {
+    // Prioriza o backup para o nome, pois é a fonte mais completa dos dados do produto.
     const produtoNoBackup = produtosNotasBackup.find(
       (p) => p.codigo === codigo,
     );
-    let nomeProduto = 'Nome não informado';
+    let nomeProduto = 'Nome não informado'; // Default se não encontrar
 
     if (produtoNoBackup && produtoNoBackup.nome) {
       nomeProduto = produtoNoBackup.nome;
     } else {
+      // Fallback: tentar encontrar em produtosNotas (caso raro, mas para segurança)
       const produtoEmNotas = produtosNotas.find((p) => p.codigo === codigo);
       if (produtoEmNotas && produtoEmNotas.nome) {
         nomeProduto = produtoEmNotas.nome;
@@ -136,7 +144,7 @@ function emitirNota(notaSelecionada) {
 
   notasEmitidas.push({
     numeroNota,
-    produtos: produtosInfoParaNotaEmitida,
+    produtos: produtosInfoParaNotaEmitida, // Agora armazena objetos {codigo, nome}
     notas: todasNotasRelacionadas,
   });
 
@@ -174,24 +182,27 @@ btnLimpar.addEventListener('click', () => {
 btnLimparInterface.addEventListener('click', () => {
   // Apaga os dados de produtosNotas e notasEmitidas, mas mantém o backup
   produtosNotas = [];
-  notasEmitidas = [];
+  notasEmitidas = []; // Limpa também as notas emitidas para consistência da interface
 
-  salvarDados();
-  renderizarTudo();
+  salvarDados(); // Salva o estado (produtosNotas e notasEmitidas vazios, backup intacto)
+  renderizarTudo(); // Re-renderiza a interface para mostrar as listas vazias
 
+  // Reseta o formulário
   form.reset();
-
+  // Opcional: focar no primeiro campo do formulário
   codigoInput.focus();
 });
 
 // 🔄 Renderizar tudo
 function renderizarTudo(codigoFiltro = null) {
-  renderizarProdutos(codigoFiltro);
-  renderizarNotas();
-  renderizarNotasEmitidas();
+  // Adiciona parâmetro opcional para filtrar
+  renderizarProdutos(codigoFiltro); // Passa o filtro para renderizarProdutos
+  renderizarNotas(); // Mantém a exibição global para as outras seções
+  renderizarNotasEmitidas(); // Mantém a exibição global
 }
 
 function copiarTexto(texto, elementoClicado) {
+  // 1. Verificar se a API de Clipboard está disponível
   if (!navigator.clipboard) {
     alert(
       'Seu navegador não suporta a funcionalidade de copiar para a área de transferência de forma segura, ou a página não está sendo servida via HTTPS.',
@@ -202,13 +213,15 @@ function copiarTexto(texto, elementoClicado) {
   navigator.clipboard
     .writeText(texto)
     .then(() => {
+      // Adicionar classe 'copiado' ao elemento clicado para feedback visual
       if (elementoClicado) {
         elementoClicado.classList.add('copiado');
-
+        // Remover a classe após um tempo
         setTimeout(() => {
           elementoClicado.classList.remove('copiado');
-        }, 1500);
+        }, 1500); // Remove a classe após 1.5 segundos
       }
+      // console.log('Texto copiado:', texto); // Opcional: log para debug
     })
     .catch((err) => {
       console.error('Falha ao copiar o texto:', err);
@@ -240,7 +253,7 @@ function renderizarProdutos(codigoFiltro = null) {
 
   produtosParaRenderizar.forEach((p) => {
     const div = document.createElement('div');
-    div.classList.add('card-nota');
+    div.classList.add('card-nota'); // Adiciona classe para consistência visual
     div.innerHTML = `
       <strong class="codigo-clicavel">${p.codigo}</strong>
       <div class="produto-nome-display">${p.nome || 'Nome não informado'}</div>
@@ -251,7 +264,7 @@ function renderizarProdutos(codigoFiltro = null) {
     `;
 
     div
-      .querySelector('strong.codigo-clicavel')
+      .querySelector('strong.codigo-clicavel') // Este é o elemento clicado
       .addEventListener('click', (e) => copiarTexto(p.codigo, e.target));
 
     div.querySelectorAll('span.codigo-clicavel').forEach((span) => {
@@ -260,6 +273,7 @@ function renderizarProdutos(codigoFiltro = null) {
       );
     });
 
+    // Botão de remover item
     div.querySelector('.botao-remover').addEventListener('click', () => {
       if (
         confirm(
@@ -267,13 +281,14 @@ function renderizarProdutos(codigoFiltro = null) {
         )
       ) {
         const codigoARemover = p.codigo;
-
+        // Encontra o índice real na lista principal produtosNotas
         const originalIndex = produtosNotas.findIndex(
           (item) => item.codigo === codigoARemover,
         );
         if (originalIndex > -1) {
           produtosNotas.splice(originalIndex, 1);
 
+          // Remover também do backup para manter consistência
           const backupIndex = produtosNotasBackup.findIndex(
             (item) => item.codigo === codigoARemover,
           );
@@ -307,7 +322,7 @@ function renderizarNotas() {
   notasUnicas.forEach((nota) => {
     const produtosRelacionados = produtosNotas
       .filter((p) => p.notas.includes(nota))
-      .map((p) => ({ codigo: p.codigo, nome: p.nome }));
+      .map((p) => ({ codigo: p.codigo, nome: p.nome })); // Agora mapeia para objeto com código e nome
 
     const div = document.createElement('div');
     div.classList.add('card-nota');
@@ -376,21 +391,23 @@ function renderizarNotasEmitidas() {
         })
         .join('')}</div>
     `;
-
+    // Adicionar event listener para copiar o número da nota fiscal
     const spanNumeroNota = div.querySelector('strong > span.codigo-clicavel');
     if (spanNumeroNota) {
       spanNumeroNota.addEventListener('click', (e) =>
         copiarTexto(item.numeroNota, e.target),
       );
     }
-
-    const spansCodigosProdutos = div.querySelectorAll(
-      'div > span.produto-tag > span.codigo-clicavel',
+    // Adicionar event listeners para copiar os códigos dos produtos
+    // O seletor para os spans clicáveis dos códigos permanece o mesmo,
+    // pois o span com a classe 'codigo-clicavel' ainda conterá apenas o código.
+    const spansProdutos = div.querySelectorAll(
+      'div > span.produto-tag.codigo-clicavel',
     );
-    spansCodigosProdutos.forEach((spanCodigoProduto) => {
-      const codigoDoProdutoParaCopiar = spanCodigoProduto.textContent;
-      spanCodigoProduto.addEventListener('click', (e) =>
-        copiarTexto(codigoDoProdutoParaCopiar, e.target),
+    spansProdutos.forEach((spanCodigoProduto) => {
+      const codigoProduto = spanCodigoProduto.textContent;
+      spanProduto.addEventListener('click', (e) =>
+        copiarTexto(codigoProduto, e.target),
       );
     });
 

@@ -376,21 +376,28 @@ function renderizarNotasEmitidas() {
         })
         .join('')}</div>
     `;
-
+    // Adicionar event listener para copiar o número da nota fiscal
     const spanNumeroNota = div.querySelector('strong > span.codigo-clicavel');
     if (spanNumeroNota) {
       spanNumeroNota.addEventListener('click', (e) =>
         copiarTexto(item.numeroNota, e.target),
       );
     }
-
+    // Adicionar event listeners para copiar os códigos dos produtos
+    // CORREÇÃO AQUI:
+    // O seletor deve mirar o span.codigo-clicavel que é filho do span.produto-tag.
+    // E usar a variável correta no addEventListener.
     const spansCodigosProdutos = div.querySelectorAll(
-      'div > span.produto-tag > span.codigo-clicavel',
+      'div > span.produto-tag > span.codigo-clicavel', // Seletor corrigido
     );
     spansCodigosProdutos.forEach((spanCodigoProduto) => {
-      const codigoDoProdutoParaCopiar = spanCodigoProduto.textContent;
-      spanCodigoProduto.addEventListener('click', (e) =>
-        copiarTexto(codigoDoProdutoParaCopiar, e.target),
+      // spanCodigoProduto é o elemento correto
+      const codigoDoProdutoParaCopiar = spanCodigoProduto.textContent; // Pega apenas o código
+      spanCodigoProduto.addEventListener(
+        'click',
+        (
+          e, // Usa spanCodigoProduto
+        ) => copiarTexto(codigoDoProdutoParaCopiar, e.target),
       );
     });
 

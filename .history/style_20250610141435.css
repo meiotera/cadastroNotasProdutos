@@ -1,3 +1,4 @@
+/* Reset básico */
 * {
   margin: 0;
   padding: 0;
@@ -8,15 +9,16 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: #f9fafb;
   color: #1f2937;
-  padding: 20px 15px;
+  padding: 40px 20px;
   line-height: 1.6;
 }
 
+/* Títulos */
 h1,
 h2 {
   text-align: center;
-  margin-bottom: 18px;
-  font-size: 1.5rem;
+  margin-bottom: 24px;
+  font-size: 1.6rem;
   color: #1e40af;
   font-weight: 600;
 }
@@ -24,23 +26,23 @@ h2 {
 /* Formulário */
 form {
   background: #ffffff;
-  padding: 20px 24px;
+  padding: 28px 32px;
   border-radius: 10px;
   max-width: 620px;
-  margin: 0 auto 30px auto;
+  margin: 0 auto 40px auto;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 
 label {
   display: block;
-  margin: 14px 0 6px;
+  margin: 18px 0 8px;
   font-weight: 500;
   color: #374151;
 }
 
 input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border-radius: 8px;
   border: 1.5px solid #d1d5db;
   background-color: #f9fafb;
@@ -55,14 +57,15 @@ input:focus {
   background-color: #fff;
 }
 
+/* Botões */
 button {
-  margin-top: 20px;
-  padding: 10px 20px;
+  margin-top: 24px;
+  padding: 12px 24px;
   background-color: #3b82f6;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -72,7 +75,7 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .botoes-secundarios button {
@@ -85,7 +88,7 @@ button:hover {
 
 .limpar-btn {
   background-color: #ef4444;
-  margin: 20px auto;
+  margin: 30px auto;
   display: block;
   max-width: 620px;
 }
@@ -94,40 +97,37 @@ button:hover {
   background-color: #dc2626;
 }
 
+/* Containers principais */
 #resultado,
 #notasProdutos,
 #notasEmitidas {
   max-width: 800px;
-  margin: 0 auto 30px;
+  margin: 0 auto 40px;
 }
 
-#listaProdutos,
-#notasProdutos,
-#notasEmitidas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-#listaProdutos > .card-nota {
-  margin-bottom: 0;
-  flex: 1 1 300px;
-  min-width: 280px;
+/* Lista de produtos */
+#listaProdutos > div {
+  background: #ffffff;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
 }
 
 #listaProdutos strong {
   display: block;
-  margin-bottom: 8px;
-  font-size: 0.95rem;
+  margin-bottom: 12px;
+  font-size: 1rem;
   color: #111827;
 }
 
+/* Tags */
 .tag,
 .produto-tag {
   display: inline-block;
-  padding: 4px 10px;
-  margin: 3px 4px 3px 0;
-  font-size: 0.8rem;
+  padding: 6px 14px;
+  margin: 4px 6px 4px 0;
+  font-size: 0.875rem;
   font-weight: 600;
   border-radius: 999px;
   user-select: none;
@@ -148,70 +148,34 @@ button:hover {
   opacity: 0.85;
 }
 
-.nome-produto-na-nota {
-  font-size: 0.75rem;
-  color: #4b5563;
-}
-
+/* Cartão de nota fiscal */
 .card-nota {
   background: #ffffff;
-  padding: 20px;
-  margin-bottom: 0;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-  flex: 1 1 300px;
-  min-width: 280px;
-  display: flex;
-  flex-direction: column;
-  min-height: 180px;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  border-left: 6px solid #3b82f6;
+  border-radius: 10px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
 }
 
-.card-nota:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-}
-
-.card-nota > strong {
+.card-nota strong {
   display: block;
   margin-bottom: 12px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: #111827;
-  font-weight: 600;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  line-height: 1.4;
 }
 
-.produto-nome-display {
-  font-size: 0.9rem;
-  color: #4b5563;
-  margin-bottom: 8px;
-}
-
-.card-nota div strong {
-  font-weight: 500;
-  color: #374151;
-}
-
-.card-nota > div:not(:first-child) {
-  margin-top: 12px;
-  flex-grow: 1;
-}
-
+/* Botões de ação */
 .botao-copiar,
 .botao-emitir {
   margin-left: 8px;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  margin-top: 16px;
-  align-self: flex-start;
 }
 
 .botao-copiar {
@@ -225,11 +189,11 @@ button:hover {
 
 .botao-emitir {
   background: #f59e0b;
-  color: #ffffff;
+  color: #3f2600;
 }
 
 .botao-emitir:hover {
-  background: #dd8c00;
+  background: #d97706;
 }
 
 .copiado {
@@ -237,6 +201,7 @@ button:hover {
   background-color: #25e772;
 }
 
+/* Itens clicáveis */
 .codigo-clicavel,
 .numero-nota-clicavel {
   cursor: pointer;
@@ -250,6 +215,7 @@ button:hover {
   color: #1d4ed8;
 }
 
+/* Responsivo */
 @media (max-width: 720px) {
   form,
   .limpar-btn,
@@ -257,11 +223,10 @@ button:hover {
   #notasProdutos,
   #notasEmitidas {
     padding: 20px 15px;
-    margin: 0 auto 30px;
+    margin: 0 10px 30px;
     max-width: 100%;
-    flex-direction: column;
-    gap: 12px;
   }
+
   button {
     width: 100%;
     padding: 14px 0;
@@ -277,33 +242,9 @@ button:hover {
 
 .botao-remover {
   background: transparent;
-  background-color: #fee2e2;
-  color: #ef4444;
-  border: 1px solid #fecaca;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
+  border: none;
+  color: red;
+  font-size: 16px;
   cursor: pointer;
-  margin-top: 16px;
-  align-self: flex-start;
-  line-height: 1.2;
-}
-
-#notasEmitidas {
-  background-color: #e9f5ff;
-  padding: 25px;
-  border-radius: 12px;
-  border: 2px dashed #007bff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-#notasEmitidas .card-nota {
-  background-color: #ffffff;
-  border-left: 6px solid #007bff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-#notasEmitidas .card-nota > strong {
-  color: #0056b3;
+  margin-left: 10px;
 }

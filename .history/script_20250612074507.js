@@ -385,12 +385,15 @@ function renderizarNotasEmitidas() {
     }
 
     const spansCodigosProdutos = div.querySelectorAll(
-      'div > span.produto-tag > span.codigo-clicavel',
+      'div > span.produto-tag > span.codigo-clicavel', // Seletor corrigido
     );
     spansCodigosProdutos.forEach((spanCodigoProduto) => {
-      const codigoDoProdutoParaCopiar = spanCodigoProduto.textContent;
-      spanCodigoProduto.addEventListener('click', (e) =>
-        copiarTexto(codigoDoProdutoParaCopiar, e.target),
+      const codigoDoProdutoParaCopiar = spanCodigoProduto.textContent; // Pega apenas o código
+      spanCodigoProduto.addEventListener(
+        'click',
+        (
+          e, // Usa spanCodigoProduto
+        ) => copiarTexto(codigoDoProdutoParaCopiar, e.target),
       );
     });
 

@@ -240,7 +240,7 @@ function renderizarProdutos(codigoFiltro = null) {
 
   produtosParaRenderizar.forEach((p) => {
     const div = document.createElement('div');
-    div.classList.add('card-nota');
+    div.classList.add('card-nota'); // Adiciona classe para consistência visual
     div.innerHTML = `
       <strong class="codigo-clicavel">${p.codigo}</strong>
       <div class="produto-nome-display">${p.nome || 'Nome não informado'}</div>
@@ -251,7 +251,7 @@ function renderizarProdutos(codigoFiltro = null) {
     `;
 
     div
-      .querySelector('strong.codigo-clicavel')
+      .querySelector('strong.codigo-clicavel') // Este é o elemento clicado
       .addEventListener('click', (e) => copiarTexto(p.codigo, e.target));
 
     div.querySelectorAll('span.codigo-clicavel').forEach((span) => {
@@ -260,6 +260,7 @@ function renderizarProdutos(codigoFiltro = null) {
       );
     });
 
+    // Botão de remover item
     div.querySelector('.botao-remover').addEventListener('click', () => {
       if (
         confirm(
@@ -267,13 +268,14 @@ function renderizarProdutos(codigoFiltro = null) {
         )
       ) {
         const codigoARemover = p.codigo;
-
+        // Encontra o índice real na lista principal produtosNotas
         const originalIndex = produtosNotas.findIndex(
           (item) => item.codigo === codigoARemover,
         );
         if (originalIndex > -1) {
           produtosNotas.splice(originalIndex, 1);
 
+          // Remover também do backup para manter consistência
           const backupIndex = produtosNotasBackup.findIndex(
             (item) => item.codigo === codigoARemover,
           );
@@ -307,7 +309,7 @@ function renderizarNotas() {
   notasUnicas.forEach((nota) => {
     const produtosRelacionados = produtosNotas
       .filter((p) => p.notas.includes(nota))
-      .map((p) => ({ codigo: p.codigo, nome: p.nome }));
+      .map((p) => ({ codigo: p.codigo, nome: p.nome })); // Agora mapeia para objeto com código e nome
 
     const div = document.createElement('div');
     div.classList.add('card-nota');
@@ -376,21 +378,28 @@ function renderizarNotasEmitidas() {
         })
         .join('')}</div>
     `;
-
+    // Adicionar event listener para copiar o número da nota fiscal
     const spanNumeroNota = div.querySelector('strong > span.codigo-clicavel');
     if (spanNumeroNota) {
       spanNumeroNota.addEventListener('click', (e) =>
         copiarTexto(item.numeroNota, e.target),
       );
     }
-
+    // Adicionar event listeners para copiar os códigos dos produtos
+    // CORREÇÃO AQUI:
+    // O seletor deve mirar o span.codigo-clicavel que é filho do span.produto-tag.
+    // E usar a variável correta no addEventListener.
     const spansCodigosProdutos = div.querySelectorAll(
-      'div > span.produto-tag > span.codigo-clicavel',
+      'div > span.produto-tag > span.codigo-clicavel', // Seletor corrigido
     );
     spansCodigosProdutos.forEach((spanCodigoProduto) => {
-      const codigoDoProdutoParaCopiar = spanCodigoProduto.textContent;
-      spanCodigoProduto.addEventListener('click', (e) =>
-        copiarTexto(codigoDoProdutoParaCopiar, e.target),
+      // spanCodigoProduto é o elemento correto
+      const codigoDoProdutoParaCopiar = spanCodigoProduto.textContent; // Pega apenas o código
+      spanCodigoProduto.addEventListener(
+        'click',
+        (
+          e, // Usa spanCodigoProduto
+        ) => copiarTexto(codigoDoProdutoParaCopiar, e.target),
       );
     });
 

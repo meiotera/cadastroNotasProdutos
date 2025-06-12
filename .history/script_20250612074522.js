@@ -389,8 +389,11 @@ function renderizarNotasEmitidas() {
     );
     spansCodigosProdutos.forEach((spanCodigoProduto) => {
       const codigoDoProdutoParaCopiar = spanCodigoProduto.textContent;
-      spanCodigoProduto.addEventListener('click', (e) =>
-        copiarTexto(codigoDoProdutoParaCopiar, e.target),
+      spanCodigoProduto.addEventListener(
+        'click',
+        (
+          e, // Usa spanCodigoProduto
+        ) => copiarTexto(codigoDoProdutoParaCopiar, e.target),
       );
     });
 
